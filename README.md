@@ -128,7 +128,7 @@ The Core ML model you include in your app determines which labels are used in Vi
 Load the model using a [`VNCoreMLModel`](https://developer.apple.com/documentation/vision/vncoremlmodel):
 
 ``` swift
-let visionModel = try VNCoreMLModel(for: ObjectDetector().model)
+let visionModel = try VNCoreMLModel(for: MLModel(contentsOf: modelURL))
 ```
 
 Create a [`VNCoreMLRequest`](https://developer.apple.com/documentation/vision/vncoremlrequest) with that model:
