@@ -1,14 +1,5 @@
 # ExplorAR
 > Effortless navigation through intutive AR.
-
-## Index
-### [1] Purpose  
-### [2] Demo
-### [3] Technical approach
-### [4] Future improvements
-### [5] The Team
-
-
 ## Purpose :
 Imagine you are in downtown, looking for a place to eat in. 
 
@@ -33,5 +24,7 @@ __Technologies used__ : Google Vision API (logo detection), Google Places API, A
 __Approach__ : We first feed a frame from the camera to the Vision API and obtain the label and the location of any logos it sees. Then, we obtain ratings and other useful about the restaurant that was detected by Vision API using Places API. Finally, we display the information in the Augmented Reality environment using ARKit3. The information will be overlayed over (or close to) the actual location of the restaurant and it will remain temporally stable. We currently have a working proof of concept--including detection and feature display on AR environment-- without any heavy UI/UX implementations.
 
 ## Future Improvements :
-*Improve the UI/UX beyond what the time constraints in CalHacks allowed. 
-*
+* __Improve the UI/UX__ beyond what the time constraints in CalHacks allowed. 
+* Allow the user to __choose what features should be displayed__ in the AR scene; every individual has different priorities, so this feature has high priority.
+* Try to make the app lightweight so we can increase the rate for prediction/display from ~1 times a second to ~10 times a second.
+* 
