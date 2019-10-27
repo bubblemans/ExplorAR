@@ -11,6 +11,7 @@ import Vision
 import ARKit
 import SceneKit
 
+var moreInfo: String?
 class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
     @objc func displayARText(_ notification: Notification) {
         if notification.userInfo?["userInfo"] as? [String: Any] != nil {
@@ -25,39 +26,46 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
             let score = userInfo?["score"] as? Double
             guard let score_value = score else {return}
             
-//            print(x_value)
-//            print(y_value)
-//            print(score_value)
-//            print(description)
+            if let description = description {
+                shopApi.getShop(shop: description)
+            }
             
-            if score_value < 0.7 { return }
-
-
-            let text = SCNText(string: description, extrusionDepth: 1)
-            let material = SCNMaterial()
-            material.diffuse.contents = UIColor.green
-            text.materials = [material]
-
-            let node = SCNNode()
-            let width = Double(view.frame.width)
-            let height = Double(view.frame.height)
-            node.position = SCNVector3(0, 0, -1)
-//            node.position = SCNVector3(0, 0.02, -0.1)
-            node.scale = SCNVector3(0.01, 0.01, 0.01)
-
-            node.geometry = text
-
-            sceneView.scene.rootNode.addChildNode(node)
-            sceneView.automaticallyUpdatesLighting = true
+            print(x_value)
+            print(y_value)
+            print(score_value)
+            print(description)
+            print(moreInfo)
+            
+            if score_value < 0.75 { return }
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(handleMoreInfo), name: Notification.Name("moreInfo"), object: nil)
         }
-        
+    }
+    
+    @objc func handleMoreInfo() {
+        print("handleMoreInfo")
+        let text = SCNText(string: moreInfo, extrusionDepth: 1)
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.green
+        text.materials = [material]
+
+        let node = SCNNode()
+        let width = Double(view.frame.width)
+        let height = Double(view.frame.height)
+        node.position = SCNVector3(0, 0, -1)
+        node.scale = SCNVector3(0.01, 0.01, 0.01)
+
+        node.geometry = text
+
+        sceneView.scene.rootNode.addChildNode(node)
+        sceneView.automaticallyUpdatesLighting = true
     }
     
     private var detectionOverlay: CALayer! = nil
-    let imageView = UIImageView()
     var image: UIImage?
     var sceneView = ARSCNView()
     let googleModel = GoogleModel()
+    let shopApi = ShopApi()
     let scanButton = UIButton()
     
     // Vision parts
@@ -69,28 +77,29 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
         sceneView.delegate = self
         view.addSubview(sceneView)
         sceneView.frame = view.frame
-        sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
+//        sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
         
         
         // observer
         NotificationCenter.default.addObserver(self, selector: #selector(displayARText(_:)), name: Notification.Name("displayARText"), object: nil)
 
         // timer
-        let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { (timer) in
-            guard let captureImage = self.image else {return}
+//        let timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
+////            guard let captureImage = self.image else {return}
 //            let pixbuff : CVPixelBuffer? = (self.sceneView.session.currentFrame?.capturedImage)
 //            if pixbuff == nil { return }
 //            let ciImage = CIImage(cvPixelBuffer: pixbuff!)
 //            let context = CIContext()
 //            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
 //            let captureImage = UIImage(cgImage: cgImage)
-            self.googleModel.postImage(image: captureImage)
-        }
+//            self.googleModel.postImage(image: captureImage)
+//        }
         
 //         imageView for testing captured frames
 //        view.addSubview(imageView)
-//        imageView.frame = CGRect(x: 100, y: 300, width: 300, height: 300)
+//        imageView.frame = view.frame
 //        imageView.contentMode = .scaleAspectFit
+        
         // scanButton
         view.addSubview(scanButton)
         scanButton.translatesAutoresizingMaskIntoConstraints = false
@@ -106,19 +115,29 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
     }
     
     @objc func handleScan() {
-        sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
-        for child in sceneView.scene.rootNode.childNodes {
-            child.removeFromParentNode()
+        print("handleScan")
+        for node in sceneView.scene.rootNode.childNodes {
+            node.removeFromParentNode()
         }
-        self.session.startRunning()
-        perform(#selector(blockCapture), with: nil, afterDelay: 1.0)
-        perform(#selector(delaySceneView), with: nil, afterDelay: 1.0)
+        let pixbuff : CVPixelBuffer? = (self.sceneView.session.currentFrame?.capturedImage)
+        if pixbuff == nil { return }
+        let ciImage = CIImage(cvPixelBuffer: pixbuff!)
+        let context = CIContext()
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+        let captureImage = UIImage(cgImage: cgImage)
+        self.googleModel.postImage(image: captureImage)
+//        sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
+//        self.session.startRunning()
+//        imageView.alpha = 1
+//        perform(#selector(blockCapture), with: nil, afterDelay: 2.0)
+//        perform(#selector(delaySceneView), with: nil, afterDelay: 2.0)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        perform(#selector(delaySceneView), with: nil, afterDelay: 1.0)
+        let configuration = ARWorldTrackingConfiguration()
+        self.sceneView.session.run(configuration)
+//        perform(#selector(delaySceneView), with: nil, afterDelay: 2.0)
     }
     
     @objc func delaySceneView() {
@@ -131,14 +150,7 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
 
         self.sceneView.session.pause()
     }
-//
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//        DispatchQueue.main.async {
-//            self.imageView.image = self.image?.rotate(radians: .pi/2)
-//        }
-//    }
-    
+
     override func captureOutput(_ output: AVCaptureOutput, didDrop sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         print("diddrop")
     }
@@ -146,12 +158,12 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
     override func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         print("didoutput")
 //        self.sceneView.session.pause()
-        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return  }
-        let ciImage = CIImage(cvPixelBuffer: imageBuffer)
-
-        let context = CIContext()
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return  }
-        image = UIImage(cgImage: cgImage)
+//        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return  }
+//        let ciImage = CIImage(cvPixelBuffer: imageBuffer)
+//
+//        let context = CIContext()
+//        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return  }
+//        image = UIImage(cgImage: cgImage)
 //        DispatchQueue.main.async {
 //            self.imageView.image = self.image?.rotate(radians: .pi/2)
 //        }
@@ -164,6 +176,7 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
         print("block")
         let configuration = ARWorldTrackingConfiguration()
         self.sceneView.session.run(configuration)
+//        imageView.alpha = 0
     }
 
     override func setupAVCapture() {

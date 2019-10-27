@@ -52,13 +52,13 @@ class GoogleModel: NSObject {
 //            imageView.frame = window.frame
 //        }
         
-        guard let encodedImage = image?.jpegData(compressionQuality: 0.8) else { return }
+        guard let encodedImage = image?.jpegData(compressionQuality: 1.0) else { return }
         let encodedstring = encodedImage.base64EncodedString()
 //        print(encodedstring)
       
         guard let url = URL(string: "https://vision.googleapis.com/v1/images:annotate") else { return }
         var urlRequest = URLRequest(url: url)
-        let token = "ya29.c.Kl6pB-qiaGunaBOJe9004havIuHSUJRAddTCt0PZPQBcrqy84cZvM75zrnV0p3RVjfDxyVEEiGu7NJhVQ5tISzvxWUzVWdys0A9nBeqHQ51luogeRavvoQAeZyuQVy_a"
+        let token = "ya29.c.Kl6pBxh5d6vqrtUYWFB9UilfMqVIEPlzhY7OYdCdltL2lrUG8fr3RfpTaNZgGcdyww4UkTPFVN_R4gyjRzinmjF2Ou6cMI9kbC4OazXThFSQWBLNaX4XqVG1GB0eIpi6"
         
 //        let body = """
 //        'requests': [

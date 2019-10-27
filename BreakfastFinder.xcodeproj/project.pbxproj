@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E16C78542365739C00EAB440 /* ShopApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C78532365739C00EAB440 /* ShopApi.swift */; };
 		E1E243F2236482C900CC471F /* GoogleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E243F1236482C900CC471F /* GoogleModel.swift */; };
 		FA68723920AA028000D82F25 /* ObjectDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = FA68723820AA028000D82F25 /* ObjectDetector.mlmodel */; };
 		FAB417F62099308400494E9C /* VisionObjectRecognitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB417F52099308400494E9C /* VisionObjectRecognitionViewController.swift */; };
@@ -21,6 +22,7 @@
 		B9491870B9491B3000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		B972A080B9729F9000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C2A2AB60C2A2AB2000000001 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E16C78532365739C00EAB440 /* ShopApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopApi.swift; sourceTree = "<group>"; };
 		E1E243F1236482C900CC471F /* GoogleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleModel.swift; sourceTree = "<group>"; };
 		FA68723820AA028000D82F25 /* ObjectDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ObjectDetector.mlmodel; sourceTree = "<group>"; };
 		FAB417F52099308400494E9C /* VisionObjectRecognitionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisionObjectRecognitionViewController.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 				FAD500A01ED668B60074D713 /* ViewController.swift */,
 				E1E243F1236482C900CC471F /* GoogleModel.swift */,
 				FAB417F52099308400494E9C /* VisionObjectRecognitionViewController.swift */,
+				E16C78532365739C00EAB440 /* ShopApi.swift */,
 				FAD500A21ED668B60074D713 /* Main.storyboard */,
 				FAD500A51ED668B60074D713 /* Assets.xcassets */,
 				FAD500A71ED668B60074D713 /* LaunchScreen.storyboard */,
@@ -169,6 +172,7 @@
 			files = (
 				FAB417F62099308400494E9C /* VisionObjectRecognitionViewController.swift in Sources */,
 				E1E243F2236482C900CC471F /* GoogleModel.swift in Sources */,
+				E16C78542365739C00EAB440 /* ShopApi.swift in Sources */,
 				FAD500A11ED668B60074D713 /* ViewController.swift in Sources */,
 				FAD5009F1ED668B60074D713 /* AppDelegate.swift in Sources */,
 				FA68723920AA028000D82F25 /* ObjectDetector.mlmodel in Sources */,

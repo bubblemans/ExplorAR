@@ -18,6 +18,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     open let session = AVCaptureSession()
     private var previewLayer: AVCaptureVideoPreviewLayer! = nil
     private let videoDataOutput = AVCaptureVideoDataOutput()
+    let imageView = UIImageView()
     
     private let videoDataOutputQueue = DispatchQueue(label: "VideoDataOutput", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     
@@ -89,8 +90,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     func startCaptureSession() {
-        session.startRunning()
-        perform(#selector(blockCapture), with: nil, afterDelay: 1.0)
+//        session.startRunning()
+//        imageView.alpha = 1
+//        perform(#selector(blockCapture), with: nil, afterDelay: 2.0)
 //        startCaptureSession()
     }
     
