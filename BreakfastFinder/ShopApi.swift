@@ -38,7 +38,7 @@ class ShopApi: NSObject {
                 let placeData = try! JSONDecoder().decode(PlaceData.self, from: data)
                 DispatchQueue.main.async {
                     if placeData.candidates.count != 0 {
-                        moreInfo = "\(shop) rating \(String(placeData.candidates[0].rating)) total ratings \(String(placeData.candidates[0].user_ratings_total))"
+                        moreInfo = "\(shop) \n rating \(String(placeData.candidates[0].rating))\n total ratings \(String(placeData.candidates[0].user_ratings_total))"
                     } else {
                         moreInfo = shop
                     }

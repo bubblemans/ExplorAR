@@ -34,7 +34,6 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
             print(y_value)
             print(score_value)
             print(description)
-            print(moreInfo)
             
             if score_value < 0.75 { return }
             
@@ -44,15 +43,18 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
     
     @objc func handleMoreInfo() {
         print("handleMoreInfo")
+        print(moreInfo)
         let text = SCNText(string: moreInfo, extrusionDepth: 1)
         let material = SCNMaterial()
-        material.diffuse.contents = UIColor.green
+        material.diffuse.contents = UIColor.orange
         text.materials = [material]
+        text.flatness = 0
+        text.font = .boldSystemFont(ofSize: 10)
 
         let node = SCNNode()
         let width = Double(view.frame.width)
         let height = Double(view.frame.height)
-        node.position = SCNVector3(0, 0, -1)
+        node.position = SCNVector3(-0.5, -1, -1)
         node.scale = SCNVector3(0.01, 0.01, 0.01)
 
         node.geometry = text
@@ -175,6 +177,8 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
     @objc func blockingSceneView() {
         print("block")
         let configuration = ARWorldTrackingConfiguration()
+        configuration.isAutoFocusEnabled = true
+        configuration.planeDetection = .horizontal
         self.sceneView.session.run(configuration)
 //        imageView.alpha = 0
     }
