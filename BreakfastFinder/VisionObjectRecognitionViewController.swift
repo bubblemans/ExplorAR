@@ -8,151 +8,187 @@ Contains the object recognition view controller for the Breakfast Finder.
 import UIKit
 import AVFoundation
 import Vision
+import ARKit
+import SceneKit
 
-class VisionObjectRecognitionViewController: ViewController {
+class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
+    @objc func displayARText(_ notification: Notification) {
+        if notification.userInfo?["userInfo"] as? [String: Any] != nil {
+            let userInfo = notification.userInfo?["userInfo"] as? [String: Any]
+            let description = userInfo?["description"] as? String
+            let x = userInfo?["x"] as? Double
+            guard let x_value = x else {return}
+            
+            let y = userInfo?["y"] as? Double
+            guard let y_value = y else {return}
+            
+            let score = userInfo?["score"] as? Double
+            guard let score_value = score else {return}
+            
+            print(x_value)
+            print(y_value)
+            print(score_value)
+            print(description)
+            
+            if score_value < 0.7 { return }
+
+
+            let text = SCNText(string: description, extrusionDepth: 1)
+            let material = SCNMaterial()
+            material.diffuse.contents = UIColor.green
+            text.materials = [material]
+
+            let node = SCNNode()
+            node.position = SCNVector3(-x_value/1000, -y_value/1000, 0)
+//            node.position = SCNVector3(0, 0.02, -0.1)
+            node.scale = SCNVector3(0.01, 0.01, 0.01)
+
+            node.geometry = text
+
+            sceneView.scene.rootNode.addChildNode(node)
+            sceneView.automaticallyUpdatesLighting = true
+            
+            perform(#selector(dismissText(node:)), with: nil, afterDelay: 0.1)
+        }
+        
+    }
+    
+    @objc func dismissText(node: SCNNode) {
+        node.removeFromParentNode()
+    }
+    
     
     private var detectionOverlay: CALayer! = nil
+    let imageView = UIImageView()
+    var image: UIImage?
+    var sceneView = ARSCNView()
+    let googleModel = GoogleModel()
     
     // Vision parts
     private var requests = [VNRequest]()
-    
-    @discardableResult
-    func setupVision() -> NSError? {
-        // Setup Vision parts
-        let error: NSError! = nil
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // sceneView
+        sceneView.delegate = self
+        view.addSubview(sceneView)
+        sceneView.frame = view.frame
+        sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
         
-        guard let modelURL = Bundle.main.url(forResource: "ObjectDetector", withExtension: "mlmodelc") else {
-            return NSError(domain: "VisionObjectRecognitionViewController", code: -1, userInfo: [NSLocalizedDescriptionKey: "Model file is missing"])
-        }
-        do {
-            let visionModel = try VNCoreMLModel(for: MLModel(contentsOf: modelURL))
-            let objectRecognition = VNCoreMLRequest(model: visionModel, completionHandler: { (request, error) in
-                DispatchQueue.main.async(execute: {
-                    // perform all the UI updates on the main queue
-                    if let results = request.results {
-                        self.drawVisionRequestResults(results)
-                    }
-                })
-            })
-            self.requests = [objectRecognition]
-        } catch let error as NSError {
-            print("Model loading went wrong: \(error)")
+        
+        // observer
+        NotificationCenter.default.addObserver(self, selector: #selector(displayARText(_:)), name: Notification.Name("displayARText"), object: nil)
+
+        // timer
+        let timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { (timer) in
+            guard let captureImage = self.image else {return}
+//            let pixbuff : CVPixelBuffer? = (self.sceneView.session.currentFrame?.capturedImage)
+//            if pixbuff == nil { return }
+//            let ciImage = CIImage(cvPixelBuffer: pixbuff!)
+//            let context = CIContext()
+//            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+//            let captureImage = UIImage(cgImage: cgImage)
+            self.googleModel.postImage(image: captureImage)
         }
         
-        return error
+//         imageView for testing captured frames
+//        view.addSubview(imageView)
+//        imageView.frame = CGRect(x: 100, y: 300, width: 300, height: 300)
+//        imageView.contentMode = .scaleAspectFit
     }
     
-    func drawVisionRequestResults(_ results: [Any]) {
-        CATransaction.begin()
-        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
-        detectionOverlay.sublayers = nil // remove all the old recognized objects
-        for observation in results where observation is VNRecognizedObjectObservation {
-            guard let objectObservation = observation as? VNRecognizedObjectObservation else {
-                continue
-            }
-            // Select only the label with the highest confidence.
-            let topLabelObservation = objectObservation.labels[0]
-            let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(bufferSize.width), Int(bufferSize.height))
-            
-            let shapeLayer = self.createRoundedRectLayerWithBounds(objectBounds)
-            
-            let textLayer = self.createTextSubLayerInBounds(objectBounds,
-                                                            identifier: topLabelObservation.identifier,
-                                                            confidence: topLabelObservation.confidence)
-            shapeLayer.addSublayer(textLayer)
-            detectionOverlay.addSublayer(shapeLayer)
-        }
-        self.updateLayerGeometry()
-        CATransaction.commit()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        perform(#selector(delaySceneView), with: nil, afterDelay: 1.5)
     }
     
+    @objc func delaySceneView() {
+        let configuration = ARWorldTrackingConfiguration()
+        self.sceneView.session.run(configuration)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        self.sceneView.session.pause()
+    }
+//
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        DispatchQueue.main.async {
+//            self.imageView.image = self.image?.rotate(radians: .pi/2)
+//        }
+//    }
+    
+    override func captureOutput(_ output: AVCaptureOutput, didDrop sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        print("diddrop")
+    }
+
     override func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return
+        print("didoutput")
+//        self.sceneView.session.pause()
+        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return  }
+        let ciImage = CIImage(cvPixelBuffer: imageBuffer)
+
+        let context = CIContext()
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return  }
+        image = UIImage(cgImage: cgImage)
+        DispatchQueue.main.async {
+            self.imageView.image = self.image?.rotate(radians: .pi/2)
         }
         
-        let exifOrientation = exifOrientationFromDeviceOrientation()
-        
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: exifOrientation, options: [:])
-        do {
-            try imageRequestHandler.perform(self.requests)
-        } catch {
-            print(error)
-        }
+//        perform(#selector(blockingSceneView), with: nil, afterDelay: 0.0001)
+
     }
     
+    @objc func blockingSceneView() {
+        print("block")
+        let configuration = ARWorldTrackingConfiguration()
+        self.sceneView.session.run(configuration)
+    }
+
     override func setupAVCapture() {
         super.setupAVCapture()
-        
-        // setup Vision parts
-        setupLayers()
-        updateLayerGeometry()
-        setupVision()
-        
-        // start the capture
         startCaptureSession()
     }
     
-    func setupLayers() {
-        detectionOverlay = CALayer() // container layer that has all the renderings of the observations
-        detectionOverlay.name = "DetectionOverlay"
-        detectionOverlay.bounds = CGRect(x: 0.0,
-                                         y: 0.0,
-                                         width: bufferSize.width,
-                                         height: bufferSize.height)
-        detectionOverlay.position = CGPoint(x: rootLayer.bounds.midX, y: rootLayer.bounds.midY)
-        rootLayer.addSublayer(detectionOverlay)
+    func createTextNode(string: String)->SCNNode {
+        let text = SCNText(string: string, extrusionDepth: 0.1)
+        let textNode = SCNNode(geometry: text)
+        
+        textNode.scale = SCNVector3(1, 1, 1)
+        textNode.position = SCNVector3(1, 1, 0)
+        return textNode
     }
     
-    func updateLayerGeometry() {
-        let bounds = rootLayer.bounds
-        var scale: CGFloat
-        
-        let xScale: CGFloat = bounds.size.width / bufferSize.height
-        let yScale: CGFloat = bounds.size.height / bufferSize.width
-        
-        scale = fmax(xScale, yScale)
-        if scale.isInfinite {
-            scale = 1.0
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        DispatchQueue.main.async {
+            node.addChildNode(self.createTextNode(string: "KFC"))
+            print("renderer")
         }
-        CATransaction.begin()
-        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
-        
-        // rotate the layer into screen orientation and scale and mirror
-        detectionOverlay.setAffineTransform(CGAffineTransform(rotationAngle: CGFloat(.pi / 2.0)).scaledBy(x: scale, y: -scale))
-        // center the layer
-        detectionOverlay.position = CGPoint (x: bounds.midX, y: bounds.midY)
-        
-        CATransaction.commit()
-        
     }
-    
-    func createTextSubLayerInBounds(_ bounds: CGRect, identifier: String, confidence: VNConfidence) -> CATextLayer {
-        let textLayer = CATextLayer()
-        textLayer.name = "Object Label"
-        let formattedString = NSMutableAttributedString(string: String(format: "\(identifier)\nConfidence:  %.2f", confidence))
-        let largeFont = UIFont(name: "Helvetica", size: 24.0)!
-        formattedString.addAttributes([NSAttributedString.Key.font: largeFont], range: NSRange(location: 0, length: identifier.count))
-        textLayer.string = formattedString
-        textLayer.bounds = CGRect(x: 0, y: 0, width: bounds.size.height - 10, height: bounds.size.width - 10)
-        textLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
-        textLayer.shadowOpacity = 0.7
-        textLayer.shadowOffset = CGSize(width: 2, height: 2)
-        textLayer.foregroundColor = CGColor(colorSpace: CGColorSpaceCreateDeviceRGB(), components: [0.0, 0.0, 0.0, 1.0])
-        textLayer.contentsScale = 2.0 // retina rendering
-        // rotate the layer into screen orientation and scale and mirror
-        textLayer.setAffineTransform(CGAffineTransform(rotationAngle: CGFloat(.pi / 2.0)).scaledBy(x: 1.0, y: -1.0))
-        return textLayer
+}
+
+extension UIImage {
+    func rotate(radians: CGFloat) -> UIImage {
+        let rotatedSize = CGRect(origin: .zero, size: size)
+            .applying(CGAffineTransform(rotationAngle: CGFloat(radians)))
+            .integral.size
+        UIGraphicsBeginImageContext(rotatedSize)
+        if let context = UIGraphicsGetCurrentContext() {
+            let origin = CGPoint(x: rotatedSize.width / 2.0,
+                                 y: rotatedSize.height / 2.0)
+            context.translateBy(x: origin.x, y: origin.y)
+            context.rotate(by: radians)
+            draw(in: CGRect(x: -origin.y, y: -origin.x,
+                            width: size.width, height: size.height))
+            let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+
+            return rotatedImage ?? self
+        }
+
+        return self
     }
-    
-    func createRoundedRectLayerWithBounds(_ bounds: CGRect) -> CALayer {
-        let shapeLayer = CALayer()
-        shapeLayer.bounds = bounds
-        shapeLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
-        shapeLayer.name = "Found Object"
-        shapeLayer.backgroundColor = CGColor(colorSpace: CGColorSpaceCreateDeviceRGB(), components: [1.0, 1.0, 0.2, 0.4])
-        shapeLayer.cornerRadius = 7
-        return shapeLayer
-    }
-    
 }
