@@ -25,10 +25,10 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
             let score = userInfo?["score"] as? Double
             guard let score_value = score else {return}
             
-            print(x_value)
-            print(y_value)
-            print(score_value)
-            print(description)
+//            print(x_value)
+//            print(y_value)
+//            print(score_value)
+//            print(description)
             
             if score_value < 0.7 { return }
 
@@ -39,7 +39,9 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
             text.materials = [material]
 
             let node = SCNNode()
-            node.position = SCNVector3(-x_value/1000, -y_value/1000, 0)
+            let width = Double(view.frame.width)
+            let height = Double(view.frame.height)
+            node.position = SCNVector3(0, 0, -1)
 //            node.position = SCNVector3(0, 0.02, -0.1)
             node.scale = SCNVector3(0.01, 0.01, 0.01)
 
@@ -47,22 +49,16 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
 
             sceneView.scene.rootNode.addChildNode(node)
             sceneView.automaticallyUpdatesLighting = true
-            
-            perform(#selector(dismissText(node:)), with: nil, afterDelay: 0.1)
         }
         
     }
-    
-    @objc func dismissText(node: SCNNode) {
-        node.removeFromParentNode()
-    }
-    
     
     private var detectionOverlay: CALayer! = nil
     let imageView = UIImageView()
     var image: UIImage?
     var sceneView = ARSCNView()
     let googleModel = GoogleModel()
+    let scanButton = UIButton()
     
     // Vision parts
     private var requests = [VNRequest]()
@@ -80,7 +76,7 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(displayARText(_:)), name: Notification.Name("displayARText"), object: nil)
 
         // timer
-        let timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { (timer) in
+        let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { (timer) in
             guard let captureImage = self.image else {return}
 //            let pixbuff : CVPixelBuffer? = (self.sceneView.session.currentFrame?.capturedImage)
 //            if pixbuff == nil { return }
@@ -95,12 +91,34 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
 //        view.addSubview(imageView)
 //        imageView.frame = CGRect(x: 100, y: 300, width: 300, height: 300)
 //        imageView.contentMode = .scaleAspectFit
+        // scanButton
+        view.addSubview(scanButton)
+        scanButton.translatesAutoresizingMaskIntoConstraints = false
+        scanButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        scanButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100).isActive = true
+        scanButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        scanButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        scanButton.setTitle("Scan", for: .normal)
+        scanButton.setTitleColor(.white, for: .normal)
+        scanButton.backgroundColor = .black
+        scanButton.layer.cornerRadius = 10
+        scanButton.addTarget(self, action: #selector(handleScan), for: .touchUpInside)
+    }
+    
+    @objc func handleScan() {
+        sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
+        for child in sceneView.scene.rootNode.childNodes {
+            child.removeFromParentNode()
+        }
+        self.session.startRunning()
+        perform(#selector(blockCapture), with: nil, afterDelay: 1.0)
+        perform(#selector(delaySceneView), with: nil, afterDelay: 1.0)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        perform(#selector(delaySceneView), with: nil, afterDelay: 1.5)
+        perform(#selector(delaySceneView), with: nil, afterDelay: 1.0)
     }
     
     @objc func delaySceneView() {
@@ -134,9 +152,9 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
         let context = CIContext()
         guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return  }
         image = UIImage(cgImage: cgImage)
-        DispatchQueue.main.async {
-            self.imageView.image = self.image?.rotate(radians: .pi/2)
-        }
+//        DispatchQueue.main.async {
+//            self.imageView.image = self.image?.rotate(radians: .pi/2)
+//        }
         
 //        perform(#selector(blockingSceneView), with: nil, afterDelay: 0.0001)
 

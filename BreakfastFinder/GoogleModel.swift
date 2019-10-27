@@ -58,7 +58,7 @@ class GoogleModel: NSObject {
       
         guard let url = URL(string: "https://vision.googleapis.com/v1/images:annotate") else { return }
         var urlRequest = URLRequest(url: url)
-        let token = "ya29.c.Kl6pB7QENFw9CsmheXZzL2LApHF_n1kZYqAXKs_aubb1MU5fOm8g2dJcENX0YeLxQlo2cqoRKpCwpNpnlzpqqAWaM_w1hfkXAKq47L2Y1EaX52oOAsbAzCbEwzpTkOph"
+        let token = "ya29.c.Kl6pB-qiaGunaBOJe9004havIuHSUJRAddTCt0PZPQBcrqy84cZvM75zrnV0p3RVjfDxyVEEiGu7NJhVQ5tISzvxWUzVWdys0A9nBeqHQ51luogeRavvoQAeZyuQVy_a"
         
 //        let body = """
 //        'requests': [
