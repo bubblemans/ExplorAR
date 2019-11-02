@@ -58,7 +58,7 @@ class GoogleModel: NSObject {
       
         guard let url = URL(string: "https://vision.googleapis.com/v1/images:annotate") else { return }
         var urlRequest = URLRequest(url: url)
-        let token = "ya29.c.Kl6pBxh5d6vqrtUYWFB9UilfMqVIEPlzhY7OYdCdltL2lrUG8fr3RfpTaNZgGcdyww4UkTPFVN_R4gyjRzinmjF2Ou6cMI9kbC4OazXThFSQWBLNaX4XqVG1GB0eIpi6"
+        let token = "ya29.c.Kl6vB2OjquqNzbzmrMlMAe-bPBuDHm_IcnvfGeNReep5661JU4h_8jDR8gCvw-cPAhlUcXXrgm4ki9bJqPtLtJeVUeOVvXWzz7s4k3jzxCQK9NN7KU3IGSBpnVDOs9_w"
         
 //        let body = """
 //        'requests': [
@@ -105,6 +105,7 @@ class GoogleModel: NSObject {
                     
                 } catch {
 //                    print("data decode error")
+                    print(data)
                     print(response)
                 }
 //                print(googleResponse)

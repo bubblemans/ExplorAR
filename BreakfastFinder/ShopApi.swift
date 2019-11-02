@@ -29,21 +29,38 @@ class ShopApi: NSObject {
     
     open func getShop(shop: String) {
         //create the url with NSURL
-        guard let url = URL(string: "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=" + shop+"&inputtype=textquery&fields=rating,user_ratings_total,opening_hours&key=AIzaSyAV_g95BHd1soxeOn45XfmYd9JNpDCtNmY") else { return }
+        print("shop \(shop)")
+        
+        let queryItems = [NSURLQueryItem(name: "input", value: shop), NSURLQueryItem(name: "inputtype", value: "textquery"), NSURLQueryItem(name: "fields", value: "rating,user_ratings_total,opening_hours"), NSURLQueryItem(name: "key", value: "AIzaSyAV_g95BHd1soxeOn45XfmYd9JNpDCtNmY")]
+        let urlComps = NSURLComponents(string: "https://maps.googleapis.com/maps/api/place/findplacefromtext/json")!
+        urlComps.queryItems = queryItems as [URLQueryItem]
+        let url = urlComps.url!
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if error != nil { return }
+            if error != nil {
+                return
+            }
             if let data = data {
-                let placeData = try! JSONDecoder().decode(PlaceData.self, from: data)
-                DispatchQueue.main.async {
-                    if placeData.candidates.count != 0 {
-                        moreInfo = "\(shop) \n rating \(String(placeData.candidates[0].rating))\n total ratings \(String(placeData.candidates[0].user_ratings_total))"
-                    } else {
-                        moreInfo = shop
+                do {
+                    let placeData = try JSONDecoder().decode(PlaceData.self, from: data)
+                    DispatchQueue.main.async {
+                        if placeData.candidates.count != 0 {
+                            moreInfo = "\(shop) \n rating \(String(placeData.candidates[0].rating))\n total ratings \(String(placeData.candidates[0].user_ratings_total))"
+                        } else {
+                            moreInfo = shop
+                        }
+                        NotificationCenter.default.post(name: Notification.Name("moreInfo"), object: nil)
                     }
-                    NotificationCenter.default.post(name: Notification.Name("moreInfo"), object: nil)
+                } catch {
+                    DispatchQueue.main.async {
+                        moreInfo = shop
+                        NotificationCenter.default.post(name: Notification.Name("moreInfo"), object: nil)
+                    }
                 }
+            } else {
+                moreInfo = shop
+                NotificationCenter.default.post(name: Notification.Name("moreInfo"), object: nil)
             }
         }.resume()
     }

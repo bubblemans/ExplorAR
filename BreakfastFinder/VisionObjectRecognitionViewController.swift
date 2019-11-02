@@ -26,18 +26,40 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
             let score = userInfo?["score"] as? Double
             guard let score_value = score else {return}
             
-            if let description = description {
-                shopApi.getShop(shop: description)
-            }
-            
             print(x_value)
             print(y_value)
             print(score_value)
             print(description)
             
-            if score_value < 0.75 { return }
+            if score_value < 0.7 { return }
+            
+//            let text = SCNText(string: description!, extrusionDepth: 1)
+//            let material = SCNMaterial()
+//            material.diffuse.contents = UIColor.orange
+//            text.materials = [material]
+//            text.flatness = 0
+//            text.font = .boldSystemFont(ofSize: 10)
+//
+//            let node = SCNNode()
+//            let width = Double(view.frame.width)
+//            let height = Double(view.frame.height)
+//            node.position = SCNVector3(-0.5, -1, -1)
+//            node.scale = SCNVector3(0.01, 0.01, 0.01)
+//
+//            node.geometry = text
+//
+//            sceneView.session.pause()
+//            let configuration = ARWorldTrackingConfiguration()
+//            sceneView.session.run(configuration)
+//
+//            sceneView.scene.rootNode.addChildNode(node)
+//            sceneView.automaticallyUpdatesLighting = true
             
             NotificationCenter.default.addObserver(self, selector: #selector(handleMoreInfo), name: Notification.Name("moreInfo"), object: nil)
+
+            if let description = description {
+                shopApi.getShop(shop: description)
+            }
         }
     }
     
@@ -58,7 +80,7 @@ class VisionObjectRecognitionViewController: ViewController, ARSCNViewDelegate {
         node.scale = SCNVector3(0.01, 0.01, 0.01)
 
         node.geometry = text
-
+ 
         sceneView.scene.rootNode.addChildNode(node)
         sceneView.automaticallyUpdatesLighting = true
     }

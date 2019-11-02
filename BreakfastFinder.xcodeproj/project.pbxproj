@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7ABD4778DCB9FFE46D763BF6 /* Pods_BreakfastFinder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9A8659CC50166BF3C49464 /* Pods_BreakfastFinder.framework */; };
 		E16C78542365739C00EAB440 /* ShopApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C78532365739C00EAB440 /* ShopApi.swift */; };
 		E1E243F2236482C900CC471F /* GoogleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E243F1236482C900CC471F /* GoogleModel.swift */; };
 		FA68723920AA028000D82F25 /* ObjectDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = FA68723820AA028000D82F25 /* ObjectDetector.mlmodel */; };
@@ -19,6 +20,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6D4C73115E60D602E1A43E32 /* Pods-BreakfastFinder.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreakfastFinder.debug.xcconfig"; path = "Target Support Files/Pods-BreakfastFinder/Pods-BreakfastFinder.debug.xcconfig"; sourceTree = "<group>"; };
+		6E9A8659CC50166BF3C49464 /* Pods_BreakfastFinder.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BreakfastFinder.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		71E3DD0B80CC19454F3C44A2 /* Pods-BreakfastFinder.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BreakfastFinder.release.xcconfig"; path = "Target Support Files/Pods-BreakfastFinder/Pods-BreakfastFinder.release.xcconfig"; sourceTree = "<group>"; };
 		B9491870B9491B3000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		B972A080B9729F9000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C2A2AB60C2A2AB2000000001 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -40,12 +44,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7ABD4778DCB9FFE46D763BF6 /* Pods_BreakfastFinder.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B3EB5E5A19EAD27B73129B5D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6E9A8659CC50166BF3C49464 /* Pods_BreakfastFinder.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B94912A0B949159000000001 /* LICENSE */ = {
 			isa = PBXGroup;
 			children = (
@@ -62,6 +75,15 @@
 			name = Configuration;
 			sourceTree = "<group>";
 		};
+		F2EB52B7DFB8E711F0CFCA41 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6D4C73115E60D602E1A43E32 /* Pods-BreakfastFinder.debug.xcconfig */,
+				71E3DD0B80CC19454F3C44A2 /* Pods-BreakfastFinder.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		FAD500921ED668B60074D713 = {
 			isa = PBXGroup;
 			children = (
@@ -70,6 +92,8 @@
 				FAD5009C1ED668B60074D713 /* Products */,
 				B9727590B972755000000001 /* Configuration */,
 				B94912A0B949159000000001 /* LICENSE */,
+				F2EB52B7DFB8E711F0CFCA41 /* Pods */,
+				B3EB5E5A19EAD27B73129B5D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -105,6 +129,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FAD500AD1ED668B60074D713 /* Build configuration list for PBXNativeTarget "BreakfastFinder" */;
 			buildPhases = (
+				61914CB4E5A00F7C24746EC2 /* [CP] Check Pods Manifest.lock */,
 				FAD500971ED668B60074D713 /* Sources */,
 				FAD500981ED668B60074D713 /* Frameworks */,
 				FAD500991ED668B60074D713 /* Resources */,
@@ -164,6 +189,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		61914CB4E5A00F7C24746EC2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BreakfastFinder-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FAD500971ED668B60074D713 /* Sources */ = {
@@ -328,6 +378,8 @@
 				DEVELOPMENT_TEAM = NG87J4X424;
 				INFOPLIST_FILE = BreakfastFinder/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PODS_PODFILE_DIR_PATH = "${SRCROOT}/.";
+				PODS_ROOT = "${SRCROOT}/Pods";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.BreakfastFinder${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -345,6 +397,8 @@
 				DEVELOPMENT_TEAM = NG87J4X424;
 				INFOPLIST_FILE = BreakfastFinder/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PODS_PODFILE_DIR_PATH = "${SRCROOT}/.";
+				PODS_ROOT = "${SRCROOT}/Pods";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.BreakfastFinder${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
