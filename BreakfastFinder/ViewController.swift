@@ -91,15 +91,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     func startCaptureSession() {
 //        session.startRunning()
-//        imageView.alpha = 1
-//        perform(#selector(blockCapture), with: nil, afterDelay: 2.0)
-//        startCaptureSession()
     }
-    
-    @objc open func blockCapture() {
-        session.stopRunning()
-    }
-    
     
     
     // Clean up capture setup

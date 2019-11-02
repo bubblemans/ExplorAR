@@ -46,15 +46,8 @@ class GoogleModel: NSObject {
     }
 
     open func postImage(image: UIImage?) {
-//        if let window = UIApplication.shared.keyWindow {
-//            let imageView = UIImageView(image: image)
-//            window.addSubview(imageView)
-//            imageView.frame = window.frame
-//        }
-        
         guard let encodedImage = image?.jpegData(compressionQuality: 1.0) else { return }
         let encodedstring = encodedImage.base64EncodedString()
-//        print(encodedstring)
       
         guard let url = URL(string: "https://vision.googleapis.com/v1/images:annotate") else { return }
         var urlRequest = URLRequest(url: url)
@@ -81,18 +74,9 @@ class GoogleModel: NSObject {
         urlRequest.addValue("Bearer " + token, forHTTPHeaderField: "Authorization")
         urlRequest.httpBody = try! JSONEncoder().encode(body)
         URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if let response = response as? HTTPURLResponse,
-                (200...299).contains(response.statusCode) != true{
-//                print(response)
-            }
-            
-//            print(response)
-            
             if let data = data {
-//                print(String(data: data, encoding: .utf8))
                 do {
                     var googleResponse = try JSONDecoder().decode(GoogleResponse.self, from: data)
-//                    print(googleResponse.responses[0].logoAnnotations[0].description)
                     let x = googleResponse.responses[0].logoAnnotations[0].boundingPoly.vertices[0].x
                     let y = googleResponse.responses[0].logoAnnotations[0].boundingPoly.vertices[0].y
                     let score = googleResponse.responses[0].logoAnnotations[0].score
@@ -104,11 +88,7 @@ class GoogleModel: NSObject {
                     }
                     
                 } catch {
-//                    print("data decode error")
-                    print(data)
-                    print(response)
                 }
-//                print(googleResponse)
             }
             
         }.resume()
