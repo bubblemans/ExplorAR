@@ -2,16 +2,13 @@
 
 > Effortless navigation through intuitive AR.
 
-## Purpose
-
 View shops' information on the street using AR technology including types of shops, discount information, and so on. We foresee this idea can replace Yelp or be integrated into Yelp or Google Map.
 
 ## Demo
 For the Demo, we use accessable logo to detect.
 
 
-![Image of demo1](https://github.com/bubblemans/ExplorAR/blob/master/image/demoAR.png)
-![Image of demo2](https://github.com/bubblemans/ExplorAR/blob/master/image/demo2.png)
+![Image of demo1](https://github.com/bubblemans/ExplorAR/blob/master/image/demoAR.png)![Image of demo2](https://github.com/bubblemans/ExplorAR/blob/master/image/demo2.png)
 
 ## Technical Approach
 
