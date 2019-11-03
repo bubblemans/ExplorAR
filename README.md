@@ -19,7 +19,8 @@ Finally! You picked a place....but where is that place? You enter the map view a
 Needless switching between one view and the other, but why? What if we could achieve this effortlessly in an intuitive Augmented Reality, all from an iOS app?
 
 ## Demo
-
+![Image of demo1]
+(https://github.com/bubblemans/ExplorAR/blob/master/image/demoAR.png)
 <!-- image of app detecting restaurants and displaying rating -->
 
 <!-- video showing temporal stability of displayed information -->
